@@ -86,14 +86,8 @@ This experiment tests **geometry shift**, **agent-space mapping shift**, and **m
 ### Method
 - Load a portable hybrid eigen-skill (`hybrid_portable_skill.npy`)
 - Reconstruct the old agent-space mapping from the original environment  
-- Construct the NEW environment:
-  - Grid size: **18×13**
-  - Vertical wall at `x = 9`
-  - Door at `(9, 3)`
-  - Start at `(1, 3)`
-  - Goal at `(13, 3)`
 - Wrap the skill into an `AgentSpaceOption` with:
-  - Manual termination at `(dx, dy) = (2, 0)` (two steps past the door)
+- Manual termination at `(dx, dy) = (2, 0)` (two steps past the door)
 - Train two agents:
   1. **Baseline Q-learning** (scratch)
   2. **Transferred hybrid skill + Q-learning** (SMDP)
