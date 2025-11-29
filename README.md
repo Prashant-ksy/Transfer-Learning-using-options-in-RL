@@ -76,26 +76,45 @@ Test whether eigenoptions generalize when only the **goal state** changes and th
 
 ---
 
-## Experiment 2 — Transfer to a New Four-Rooms Layout (Hybrid Agent-Space Skill)
+## Experiment 2 — Transfer to a New Environment with changed dynamics
 
 ### Objective
-Test whether a portable skill learned in a **11×5 environment** can transfer to a full **Four-Rooms** environment with different geometry.
+Evaluate whether a hybrid eigen-skill (learned in an earlier environment with a different door and wall configuration) can be transferred to a **new environment with different geometry**, door placement, and dynamics.
+
+This experiment tests **geometry shift**, **agent-space mapping shift**, and **manual option termination**.
 
 ### Method
-- Learn SR in *agent-space*  
-- Learn a portable eigen-policy  
-- Transfer the policy to a new Four-Rooms map  
-- Train:
-  - Baseline Q-learner  
-  - High-level agent with transferred option  
+- Load a portable hybrid eigen-skill (`hybrid_portable_skill.npy`)
+- Reconstruct the old agent-space mapping from the original environment  
+- Construct the NEW environment:
+  - Grid size: **18×13**
+  - Vertical wall at `x = 9`
+  - Door at `(9, 3)`
+  - Start at `(1, 3)`
+  - Goal at `(13, 3)`
+- Wrap the skill into an `AgentSpaceOption` with:
+  - Manual termination at `(dx, dy) = (2, 0)` (two steps past the door)
+- Train two agents:
+  1. **Baseline Q-learning** (scratch)
+  2. **Transferred hybrid skill + Q-learning** (SMDP)
 
 ### Results
-- Transferred option provides a **jumpstart boost**  
-- Temporary backlash occurs while learning when to use the option  
-- Final performance is significantly better than baseline  
+- The transferred agent shows a **clear jumpstart** (far fewer steps early on)
+- A brief **backlash / instability phase** occurs due to mismatched geometry
+- After adaptation, the transferred agent **outperforms the scratch agent**
+  and learns to invoke the option primarily for wall-crossing.
 
 ### Interpretation
-Agent-space encoding enables **geometry-invariant skills**, improving transfer performance.
+- The hybrid skill retains **directional knowledge** about moving through a door
+- Because the door location, wall geometry, and agent-space coordinates differ,
+  the skill is **useful but imperfect** when transferred
+- The high-level controller learns when to invoke the option properly  
+  → causing the initial fluctuations before stabilizing
+
+### Key Takeaway
+Hybrid agent-space skills **generalize across different room shapes** and  
+enable faster learning, but require a brief adaptation period.
+
 
 ---
 
